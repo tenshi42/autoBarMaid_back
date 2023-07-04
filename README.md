@@ -4,6 +4,7 @@
 - Python > 3.9 (3.10 is best)
 - Libraries : 
     - websocket_server (https://github.com/Pithikos/python-websocket-server : pip install websocket-server)
+- :warning: Has to be run on a Raspberry PI (V2, V3 or V4), due to usage of the GPIO library :warning:
 
 ## Communication protocol
 ### Websocket :
