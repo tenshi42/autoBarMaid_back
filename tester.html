@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tester</title>
+    <script>
+        let socket = null;
+        let reconnect = null;
+
+        function connect() {
+            socket = new WebSocket("ws://192.168.3.32:8765");
+
+            socket.onopen = function (e) {
+                clearInterval(reconnect);
+                socket.send(JSON.stringify({'type': 'echo', 'data': {'msg': 'connected !'}}));
+            };
+
+            socket.onmessage = function (event) {
+                console.log(`[message] Data received from server: ${event.data}`);
+            };
+
+            socket.onclose = function (event) {
+                if (event.wasClean) {
+                    // console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+                } else {
+                    // par exemple : processus serveur arrêté ou réseau en panne
+                    // event.code est généralement 1006 dans ce cas
+                    // console.log('[close] Connection died');
+                }
+
+                setTimeout(function (){
+                    console.log("Try reconnect !");
+                    connect();
+                }, 1000)
+            };
+
+            socket.onerror = function (error) {
+                // console.log(`[error]`);
+            };
+        }
+
+        function send_test(){
+            socket.send(JSON.stringify({'type': 'echo', 'data': {'msg': 'toaster'}}))
+        }
+
+        function send_test_blend(){
+            socket.send(JSON.stringify({'type': 'blend', 'data': {'cup_size': 0.04, 'ratios': {'1': 0.2, '2': 0.1, '5': 0.7}}}))
+        }
+
+        connect()
+    </script>
+</head>
+<body>
+    <button onclick="send_test()">Send Test</button>
+    <button onclick="send_test_blend()">Send Test Blend</button>
+</body>
+</html>
