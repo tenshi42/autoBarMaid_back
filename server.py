@@ -5,7 +5,7 @@ import atexit
 from websocket_server import WebsocketServer
 from threading import Thread
 
-from BlendController import BlendController
+from BlendController import BlendController, BlendAction
 
 ADDR = "0.0.0.0"
 PORT = 8765
@@ -21,21 +21,27 @@ def thread_threat_message(client, server, message):
     t.start()
 
 
+def if_not_busy(server, client, action, data, callback):
+    if blend_controller.current_action != BlendAction.Idle:
+        server.send_message(client, json.dumps({'type': 'error', 'data': {'msg': f'Busy ! Retry in {blend_controller.remaining_time} sec'}}))
+    else:
+        return action(data, callback)
+
+
 def threat_message(client, server, message):
     packet = json.loads(message)
-    if packet['type'] == 'echo':
-        print(f"Recv message : {packet['data']}")
+    message_type = packet['type']
+    print(f"Recv {message_type} : {packet['data']}")
 
+    def callback(data):
+        server.send_message(client, json.dumps({'type': 'status', 'data': data}))
+
+    if message_type == 'echo':
         server.send_message(client, json.dumps(packet))
-    elif packet['type'] == 'blend':
-        print(f"Recv blend : {packet['data']}")
-
-        def callback(remaining_time):
-            server.send_message(client, json.dumps({'type': 'status', 'data': {'remaining_time': remaining_time}}))
-
-        res = blend_controller.blend(packet['data'], callback)
-        if not res:
-            server.send_message(client, json.dumps({'type': 'error', 'data': {'msg': f'Already blending ! Retry in {blend_controller.remaining_time} sec'}}))
+    elif message_type == 'blend':
+        if_not_busy(server, client, blend_controller.blend, packet['data'], callback)
+    elif message_type == "refill":
+        if_not_busy(server, client, blend_controller.refill, packet['data'], callback)
 
 
 def main():
