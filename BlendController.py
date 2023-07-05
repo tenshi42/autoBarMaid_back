@@ -41,8 +41,6 @@ class BlendController:
         self.initial_time = max(times.values())
         self.remaining_time = int(self.remaining_time)
 
-        status_callback({"Action": self.current_action, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
-
         for pump in times.keys():
             self.pump_controller.enable_pump(int(pump), True)
 
