@@ -48,7 +48,7 @@ class BlendController:
 
         while sum(times.values()) > 0:
             self.remaining_time = max(times.values())
-            status_callback({"remaining_time": self.remaining_time})
+            status_callback({"Action": self.current_action, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
             time.sleep(1)
 
             for pump in times:

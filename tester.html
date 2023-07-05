@@ -8,7 +8,8 @@
         let reconnect = null;
 
         function connect() {
-            socket = new WebSocket("ws://192.168.3.32:8765");
+            // socket = new WebSocket("ws://192.168.3.32:8765");
+            socket = new WebSocket("ws://7.tcp.eu.ngrok.io:14708");
 
             socket.onopen = function (e) {
                 clearInterval(reconnect);
