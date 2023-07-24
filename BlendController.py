@@ -66,6 +66,9 @@ class BlendController:
 
         return True
 
+    def get_blend_status(self, status_callback):
+        status_callback({"Action": self.current_action.name, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
+
     def refill(self, data, status_callback):
         pump = data['pump']
 

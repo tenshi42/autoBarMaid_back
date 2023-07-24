@@ -72,6 +72,10 @@
             socket.send(JSON.stringify({'type': 'get_config'}))
         }
 
+        function get_blend_status(){
+            socket.send(JSON.stringify({'type': 'get_blend_status'}))
+        }
+
         connect()
     </script>
 </head>
@@ -84,5 +88,6 @@
     <button onclick="set_pump_refill_time()">set_pump_refill_time</button><br/>
     <button onclick="set_sec_per_liter()">set_sec_per_liter</button><br/>
     <button onclick="get_config()">get_config</button><br/>
+    <button onclick="get_blend_status()">get_blend_status</button><br/>
 </body>
 </html>

@@ -28,9 +28,9 @@ def thread_threat_message(client, server, message):
     t.start()
 
 
-def if_not_busy(server, client, action, data, callback):
+def if_not_busy(server, action, data, callback):
     if blend_controller.current_action != BlendAction.Idle:
-        server.send_message_to_all(json.dumps({'type': 'error', 'data': {'msg': f'Busy ! Retry in {blend_controller.remaining_time} sec'}}))
+        send_message(server, 'error', {'msg': f'Busy ! Retry in {blend_controller.remaining_time} sec'})
     else:
         return action(data, callback)
 
@@ -46,9 +46,11 @@ def threat_message(client, server, message):
     if message_type == 'echo':
         send_message(server, 'echo', packet)
     elif message_type == 'blend':
-        if_not_busy(server, client, blend_controller.blend, packet['data'], callback)
+        if_not_busy(server, blend_controller.blend, packet['data'], callback)
+    elif message_type == "get_blend_status":
+        blend_controller.get_blend_status(callback)
     elif message_type == "refill":
-        if_not_busy(server, client, blend_controller.refill, packet['data'], callback)
+        if_not_busy(server, blend_controller.refill, packet['data'], callback)
     elif message_type == "get_pumps_states":
         send_message(server, 'pumps_states', blend_controller.get_pump_states())
     elif message_type == "set_pump_state":

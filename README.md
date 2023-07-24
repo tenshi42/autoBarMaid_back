@@ -73,6 +73,13 @@
         - receive a "config" message when done
     - Data : None
     - Example : {'type': 'get_config'}
+- get_blend_status
+    - Description
+        - get the current blend status
+        - receive a "status" message when done
+    - Data : None
+    - Example : {'type': 'get_blend_status'}
+        
     
 ### From server
 - status
