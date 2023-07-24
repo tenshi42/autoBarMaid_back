@@ -48,11 +48,41 @@
             socket.send(JSON.stringify({'type': 'blend', 'data': {'cup_size': 0.04, 'ratios': {'1': 0.2, '2': 0.1, '5': 0.7}}}))
         }
 
+        function get_pumps_states(){
+            socket.send(JSON.stringify({'type': 'get_pumps_states'}))
+        }
+
+        function disable_pump_0(){
+            socket.send(JSON.stringify({'type': 'set_pump_state', 'data': {'pump_index': 0, 'state': false}}))
+        }
+
+        function enable_pump_0(){
+            socket.send(JSON.stringify({'type': 'set_pump_state', 'data': {'pump_index': 0, 'state': true}}))
+        }
+
+        function set_pump_refill_time(){
+            socket.send(JSON.stringify({'type': 'set_pump_refill_time', 'data': {'pump_index': 0, 'refill_time': 45}}))
+        }
+
+        function set_sec_per_liter(){
+            socket.send(JSON.stringify({'type': 'set_sec_per_liter', 'data': {'sec_per_liter': 666}}))
+        }
+
+        function get_config(){
+            socket.send(JSON.stringify({'type': 'get_config'}))
+        }
+
         connect()
     </script>
 </head>
 <body>
-    <button onclick="send_test()">Send Test</button>
-    <button onclick="send_test_blend()">Send Test Blend</button>
+    <button onclick="send_test()">Send Test</button><br/>
+    <button onclick="send_test_blend()">Send Test Blend</button><br/>
+    <button onclick="get_pumps_states()">Get pumps states</button><br/>
+    <button onclick="disable_pump_0()">Disable pump 0</button><br/>
+    <button onclick="enable_pump_0()">Enable pump 0</button><br/>
+    <button onclick="set_pump_refill_time()">set_pump_refill_time</button><br/>
+    <button onclick="set_sec_per_liter()">set_sec_per_liter</button><br/>
+    <button onclick="get_config()">get_config</button><br/>
 </body>
 </html>

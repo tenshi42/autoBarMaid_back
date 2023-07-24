@@ -16,6 +16,13 @@ def new_client(client, server):
     print(client)
 
 
+def send_message(server, msg_type, data):
+    server.send_message_to_all(json.dumps({
+        'type': msg_type,
+        'data': data
+    }))
+
+
 def thread_threat_message(client, server, message):
     t = Thread(target=threat_message, args=[client, server, message])
     t.start()
@@ -23,7 +30,7 @@ def thread_threat_message(client, server, message):
 
 def if_not_busy(server, client, action, data, callback):
     if blend_controller.current_action != BlendAction.Idle:
-        server.send_message(client, json.dumps({'type': 'error', 'data': {'msg': f'Busy ! Retry in {blend_controller.remaining_time} sec'}}))
+        server.send_message_to_all(json.dumps({'type': 'error', 'data': {'msg': f'Busy ! Retry in {blend_controller.remaining_time} sec'}}))
     else:
         return action(data, callback)
 
@@ -31,17 +38,37 @@ def if_not_busy(server, client, action, data, callback):
 def threat_message(client, server, message):
     packet = json.loads(message)
     message_type = packet['type']
-    print(f"Recv {message_type} : {packet['data']}")
+    # print(f"Recv {message_type} : {packet['data']}")
 
     def callback(data):
-        server.send_message(client, json.dumps({'type': 'status', 'data': data}))
+        send_message(server, 'status', data)
 
     if message_type == 'echo':
-        server.send_message(client, json.dumps(packet))
+        send_message(server, 'echo', packet)
     elif message_type == 'blend':
         if_not_busy(server, client, blend_controller.blend, packet['data'], callback)
     elif message_type == "refill":
         if_not_busy(server, client, blend_controller.refill, packet['data'], callback)
+    elif message_type == "get_pumps_states":
+        send_message(server, 'pumps_states', blend_controller.get_pump_states())
+    elif message_type == "set_pump_state":
+        pump_index = packet['data']['pump_index']
+        state = packet['data']['state']
+        blend_controller.change_pump_state(pump_index, state)
+        send_message(server, 'pumps_states', blend_controller.get_pump_states())
+    elif message_type == "set_pump_refill_time":
+        pump_index = packet['data']['pump_index']
+        refill_time = packet['data']['refill_time']
+        blend_controller.set_pump_refill_time(pump_index, refill_time)
+        send_message(server, 'pumps_states', blend_controller.get_pump_states())
+    elif message_type == "set_sec_per_liter":
+        sec_per_liter = packet['data']['sec_per_liter']
+        blend_controller.set_sec_per_liter(sec_per_liter)
+        send_message(server, 'sec_per_liter', blend_controller.get_sec_per_liter())
+    elif message_type == "get_config":
+        send_message(server, 'config', blend_controller.states)
+    else:
+        send_message(server, 'unknown_message_type', {"message": f"given message type '{message_type}' is unknown"})
 
 
 def main():

@@ -1,9 +1,11 @@
-from PumpController import PumpController, SEC_PER_LITER
+from PumpController import PumpController
 import time
 from math import ceil
+from enum import Enum
+import json
 
 
-class BlendAction:
+class BlendAction(Enum):
     Idle = 0
     Blend = 1
     Refill = 2
@@ -16,6 +18,9 @@ class BlendController:
         self.initial_time = 0
         self.remaining_time = 0
         self.current_action = BlendAction.Idle
+
+        self.states = {}
+        self.load_states()
 
     def cleanup(self):
         self.pump_controller.cleanup()
@@ -33,7 +38,7 @@ class BlendController:
             in data['ratios'].items()
         }
         times = {
-            k: int(v * SEC_PER_LITER)
+            k: int(v * self.states["sec_per_liter"])
             for k, v
             in quantities.items()
         }
@@ -46,7 +51,7 @@ class BlendController:
 
         while sum(times.values()) > 0:
             self.remaining_time = max(times.values())
-            status_callback({"Action": self.current_action, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
+            status_callback({"Action": self.current_action.name, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
             time.sleep(1)
 
             for pump in times:
@@ -56,7 +61,7 @@ class BlendController:
                     self.pump_controller.enable_pump(int(pump), False)
 
         self.remaining_time = 0
-        status_callback({"Action": self.current_action, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
+        status_callback({"Action": self.current_action.name, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
         self.current_action = BlendAction.Idle
 
         return True
@@ -64,7 +69,7 @@ class BlendController:
     def refill(self, data, status_callback):
         pump = data['pump']
 
-        status_callback({"Action": self.current_action, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
+        status_callback({"Action": self.current_action.name, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
 
         common_time = 1  # to adjust with real data
         flow_speed = 1
@@ -78,6 +83,32 @@ class BlendController:
         self.pump_controller.enable_pump(int(pump), False)
 
         self.remaining_time = 0
-        status_callback({"Action": self.current_action, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
+        status_callback({"Action": self.current_action.name, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
 
         self.current_action = BlendAction.Idle
+
+    def change_pump_state(self, pump_index, enabled):
+        self.states["pumps"][pump_index]["enabled"] = enabled
+        self.save_states()
+
+    def get_pump_states(self):
+        return self.states["pumps"]
+
+    def load_states(self):
+        with open("states.json", 'r') as f:
+            self.states = json.load(f)
+
+    def save_states(self):
+        with open("states.json", 'w') as f:
+            json.dump(self.states, f)
+
+    def set_pump_refill_time(self, pump_index, refill_time):
+        self.states["pumps"][pump_index]["refill_time"] = refill_time
+        self.save_states()
+
+    def set_sec_per_liter(self, sec_per_liter):
+        self.states["sec_per_liter"] = sec_per_liter
+        self.save_states()
+
+    def get_sec_per_liter(self):
+        return self.states["sec_per_liter"]

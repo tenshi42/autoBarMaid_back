@@ -40,6 +40,39 @@
     - Description : echo anything sent
     - Data : anything
     - Example : {"type": "echo", "data": {"msg": "toaster"}}
+- get_pumps_states
+    - Description
+        - get current pumps states
+        - receive a "pumps_states" message when done
+    - Data : none
+    - Example : {"type": "get_pumps_states"}
+- set_pump_state
+    - Description
+        - set a pump state
+        - receive a "pumps_states" message when done
+    - Data : {"pump_index": integer, "state": bool}
+    - Example : {'type': 'set_pump_state', 'data': {'pump_index': 0, 'state': false}}
+- set_pump_refill_time
+    - Description
+        - :warning: only for configuration purposes :warning:
+        - set pump refill time
+        - receive a "pumps_states" message when done
+    - Data : {'pump_index': integer, 'refill_time': integer}
+    - Example : {'type': 'set_pump_refill_time', 'data': {'pump_index': 0, 'refill_time': 45}}
+- set_sec_per_liter
+    - Description
+        - :warning: only for configuration purposes :warning:
+        - set the global "sec_per_second" value
+        - receive a "sec_per_liter" message when done
+    - Data : {'sec_per_liter': integer}
+    - Example : {'type': 'set_sec_per_liter', 'data': {'sec_per_liter': 666}}
+- get_config
+    - Description
+        - :warning: only for configuration purposes :warning:
+        - return global config
+        - receive a "config" message when done
+    - Data : None
+    - Example : {'type': 'get_config'}
     
 ### From server
 - status
@@ -57,3 +90,15 @@
     - Description : message sent if anything goes wrong/unexpected
     - Data : {"msg": string}
     - Example : {"type": "error", "data": {"msg": "Already blending ! Retry in 3 sec"}}
+- pumps_state
+    - Description : current status of all pumps
+    - Data : list
+    - Example : {"type": "pumps_states", "data": [{"enabled": true, "refill_time": 2}, {"enabled": true, "refill_time": 2}, {"enabled": true, "refill_time": 3}, {"enabled": true, "refill_time": 3}, {"enabled": true, "refill_time": 4}, {"enabled": true, "refill_time": 4}, {"enabled": true, "refill_time": 5}, {"enabled": true, "refill_time": 5}]}
+- sec_per_liter
+    - Description : get the current "sec_per_liter" config
+    - Data : integer
+    - Example : {"type": "sec_per_litter", "data": 666}
+- config
+    - Description : get the global config
+    - Data : object
+    - Example : {"type": "config", "data": {"pumps": [{"enabled": true, "refill_time": 2}, {"enabled": true, "refill_time": 2}, {"enabled": true, "refill_time": 3}, {"enabled": true, "refill_time": 3}, {"enabled": true, "refill_time": 4}, {"enabled": true, "refill_time": 4}, {"enabled": true, "refill_time": 5}, {"enabled": true, "refill_time": 5}], "sec_per_liter": 666}}

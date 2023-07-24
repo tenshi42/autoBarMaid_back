@@ -1,0 +1,13 @@
+{
+  "pumps": [
+    {"enabled": true, "refill_time": 2},
+    {"enabled": true, "refill_time": 2},
+    {"enabled": true, "refill_time": 3},
+    {"enabled": true, "refill_time": 3},
+    {"enabled": true, "refill_time": 4},
+    {"enabled": true, "refill_time": 4},
+    {"enabled": true, "refill_time": 5},
+    {"enabled": true, "refill_time": 5}
+  ],
+  "sec_per_liter": 213
+}

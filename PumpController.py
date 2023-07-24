@@ -1,9 +1,6 @@
 import RPi.GPIO as GPIO
 
 
-SEC_PER_LITER = 213  # ~0.45L/min
-
-
 class PumpController:
     def __init__(self):
         GPIO.setmode(GPIO.BOARD)
