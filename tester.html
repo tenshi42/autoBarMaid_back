@@ -45,7 +45,7 @@
         }
 
         function send_test_blend(){
-            socket.send(JSON.stringify({'type': 'blend', 'data': {'cup_size': 0.04, 'ratios': {'1': 0.2, '2': 0.1, '5': 0.7}}}))
+            socket.send(JSON.stringify({'type': 'blend', 'data': {'cup_size': 0.04, 'ratios': {'0': 0.7, '5': 0.3}}}))
         }
 
         function get_pumps_states(){
@@ -61,7 +61,7 @@
         }
 
         function set_pump_refill_time(){
-            socket.send(JSON.stringify({'type': 'set_pump_refill_time', 'data': {'pump_index': 0, 'refill_time': 45}}))
+            socket.send(JSON.stringify({'type': 'set_pump_refill_time', 'data': {'pump_index': 0, 'refill_time': 6}}))
         }
 
         function set_sec_per_liter(){
@@ -74,6 +74,18 @@
 
         function get_blend_status(){
             socket.send(JSON.stringify({'type': 'get_blend_status'}))
+        }
+
+        function set_pump_speed_ratio(){
+            socket.send(JSON.stringify({'type': 'set_pump_speed_ratio', 'data': {'pump_index': 0, 'speed_ratio': 3}}))
+        }
+
+        function reload_config(){
+            socket.send(JSON.stringify({'type': 'reload_config'}))
+        }
+
+        function refill(){
+            socket.send(JSON.stringify({'type': 'refill', 'data': {'pump': 0}}))
         }
 
         connect()
@@ -89,5 +101,8 @@
     <button onclick="set_sec_per_liter()">set_sec_per_liter</button><br/>
     <button onclick="get_config()">get_config</button><br/>
     <button onclick="get_blend_status()">get_blend_status</button><br/>
+    <button onclick="set_pump_speed_ratio()">set_pump_speed_ratio</button><br/>
+    <button onclick="reload_config()">reload_config</button><br/>
+    <button onclick="refill()">refill</button><br/>
 </body>
 </html>

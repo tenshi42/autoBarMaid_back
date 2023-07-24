@@ -69,6 +69,15 @@ def threat_message(client, server, message):
         send_message(server, 'sec_per_liter', blend_controller.get_sec_per_liter())
     elif message_type == "get_config":
         send_message(server, 'config', blend_controller.states)
+    elif message_type == "set_pump_speed_ratio":
+        pump_index = packet['data']['pump_index']
+        speed_ratio = packet['data']['speed_ratio']
+        blend_controller.set_pump_speed_ratio(pump_index, speed_ratio)
+        send_message(server, 'config', blend_controller.states)
+    elif message_type == "reload_config":
+        blend_controller.load_states()
+        send_message(server, 'config', blend_controller.states)
+
     else:
         send_message(server, 'unknown_message_type', {"message": f"given message type '{message_type}' is unknown"})
 

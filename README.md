@@ -28,7 +28,7 @@
         - cup_size in litter
         - not used liquid can be omitted
         - ratio for each liquid (0.0->1.0) (sum not checked)
-    - Example : {"type": "blend", "data": {"cup_size": 0.04, "ratios": {"1": 0.2, "2": 0.1, "5": 0.7}}}
+    - Example : {"type": "blend", "data": {"cup_size": 0.04, "ratios": {"0": 0.2, "1": 0.1, "4": 0.7}}}
 - refill
     - Description
         - Blocking action
@@ -57,7 +57,7 @@
         - :warning: only for configuration purposes :warning:
         - set pump refill time
         - receive a "pumps_states" message when done
-    - Data : {'pump_index': integer, 'refill_time': integer}
+    - Data : {'pump_index': integer, 'refill_time': float}
     - Example : {'type': 'set_pump_refill_time', 'data': {'pump_index': 0, 'refill_time': 45}}
 - set_sec_per_liter
     - Description
@@ -79,6 +79,19 @@
         - receive a "status" message when done
     - Data : None
     - Example : {'type': 'get_blend_status'}
+- set_pump_speed_ratio
+    - Description
+        - :warning: only for configuration purposes :warning:
+        - set a pump speed ratio
+        - if the flow is slower than other pumps, try to set a higher value
+    - Data : {'pump_index': integer, 'speed_ratio': float}
+    - Example : {'type': 'set_pump_speed_ratio', 'data': {'pump_index': 0, 'speed_ratio': 1.3}}
+- reload_config
+    - Description
+        - :warning: only for configuration purposes :warning:
+        - reload the config from the save file
+    - Data : None
+    - Example : {'type': 'reload_config'}
         
     
 ### From server

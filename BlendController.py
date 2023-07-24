@@ -38,13 +38,13 @@ class BlendController:
             in data['ratios'].items()
         }
         times = {
-            k: int(v * self.states["sec_per_liter"])
+            k: int(v * self.states["sec_per_liter"] * self.states["pumps"][int(k)]["speed_ratio"])
             for k, v
             in quantities.items()
         }
 
         self.initial_time = max(times.values())
-        self.remaining_time = int(self.remaining_time)
+        self.remaining_time = int(self.initial_time)
 
         for pump in times.keys():
             self.pump_controller.enable_pump(int(pump), True)
@@ -72,22 +72,19 @@ class BlendController:
     def refill(self, data, status_callback):
         pump = data['pump']
 
-        status_callback({"Action": self.current_action.name, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
-
-        common_time = 1  # to adjust with real data
-        flow_speed = 1
-
-        self.initial_time = common_time + ceil((int(pump) + 1) / 2) * flow_speed
-        self.remaining_time = int(self.remaining_time)
+        self.initial_time = self.states["pumps"][pump]["refill_time"]
+        self.remaining_time = int(self.initial_time)
 
         self.pump_controller.enable_pump(int(pump), True)
         self.current_action = BlendAction.Refill
-        time.sleep(self.remaining_time)
+        while self.remaining_time > 0:
+            status_callback({"Action": self.current_action.name, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
+            time.sleep(0.5)
+            self.remaining_time -= 0.5
         self.pump_controller.enable_pump(int(pump), False)
 
         self.remaining_time = 0
         status_callback({"Action": self.current_action.name, "initial_time": self.initial_time, "remaining_time": self.remaining_time})
-
         self.current_action = BlendAction.Idle
 
     def change_pump_state(self, pump_index, enabled):
@@ -115,3 +112,7 @@ class BlendController:
 
     def get_sec_per_liter(self):
         return self.states["sec_per_liter"]
+
+    def set_pump_speed_ratio(self, pump_index, speed_ratio):
+        self.states["pumps"][pump_index]["speed_ratio"] = speed_ratio
+        self.save_states()
