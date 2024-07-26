@@ -9,5 +9,6 @@
     {"enabled": true, "refill_time": 5, "speed_ratio": 1.0},
     {"enabled": true, "refill_time": 5, "speed_ratio": 1.0}
   ],
-  "sec_per_liter": 213
+  "sec_per_liter": 213,
+  "new_sec_per_liter": 90
 }

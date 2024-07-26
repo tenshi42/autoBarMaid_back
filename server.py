@@ -42,6 +42,7 @@ def threat_message(client, server, message):
 
     def callback(data):
         send_message(server, 'status', data)
+        print('status', data)
 
     if message_type == 'echo':
         send_message(server, 'echo', packet)
